@@ -20,27 +20,6 @@
 	let hue = $state(120);
 	let invertBrightness = $state(false); // false = normal, true = invertiert
 	let gradientMode = $state(false); // false = statisch, true = Farbverlauf
-	let colorPaletteActive = $state(false); // Toggle für die Farbpalette
-	let dynamicColorMode = $state(true); // Toggle für dynamische Farben
-
-	// Farbpalette
-	const paletteColors = {
-		ebony: '#555D50',
-		artichoke: '#8A9A5B',
-		antiqueBrass: '#CD7F32',
-		desertSand: '#EDC9AF'
-	};
-
-	// Funktion zum Umschalten zwischen den Modi
-	function togglePalette() {
-		colorPaletteActive = true;
-		dynamicColorMode = false;
-	}
-
-	function toggleDynamicMode() {
-		dynamicColorMode = true;
-		colorPaletteActive = false;
-	}
 
 	// Dynamische Helligkeitswerte die zwischen normal und invertiert wechseln
 	let brightness1 = $derived(invertBrightness ? 0.9 : 0.4);
@@ -59,10 +38,10 @@
 		return chroma.oklch(baseHue, 0.2, hue + offset).hex();
 	}
 
-	let color1 = $derived(colorPaletteActive ? paletteColors.ebony : chroma.oklch(brightness1, 0.2, hue+40).hex());
-	let color2 = $derived(colorPaletteActive ? paletteColors.artichoke : chroma.oklch(brightness2, 0.2, hue+80).hex());
-	let color3 = $derived(colorPaletteActive ? paletteColors.antiqueBrass : chroma.oklch(brightness3, 0.2, hue+120).hex());
-	let color4 = $derived(colorPaletteActive ? paletteColors.desertSand : chroma.oklch(brightness4, 0.2, hue+160).hex());
+	let color1 = $derived(chroma.oklch(brightness1, 0.2, hue+40).hex());
+	let color2 = $derived(chroma.oklch(brightness2, 0.2, hue+80).hex());
+	let color3 = $derived(chroma.oklch(brightness3, 0.2, hue+120).hex());
+	let color4 = $derived(chroma.oklch(brightness4, 0.2, hue+160).hex());
 	// $inspect(color1);
 
 	const squareCount = 20;
@@ -116,37 +95,9 @@
 		<label for="breite2">Width2: {breite2.toFixed(2)}</label>
 	</div>
 	<div class="control-item">
-		<label>Farbmodus</label>
-		<div class="button-group">
-			<button 
-				class="palette-button" 
-				class:active={colorPaletteActive}
-				onclick={togglePalette}
-				title="Farbpalette"
-			>
-				<svg viewBox="0 0 100 100" class="palette-preview">
-					<rect x="0" y="0" width="50" height="50" fill={paletteColors.desertSand} />
-					<polygon points="0,50 25,75 0,100 -25,75" fill={paletteColors.ebony} />
-					<polygon points="0,50 50,50 75,75 25,75" fill={paletteColors.artichoke} />
-					<polygon points="50,0 50,50 75,25 75,-25" fill={paletteColors.antiqueBrass} />
-				</svg>
-			</button>
-			<button 
-				class="palette-button" 
-				class:active={dynamicColorMode}
-				onclick={toggleDynamicMode}
-				title="Dynamische Farben"
-			>
-				<svg viewBox="0 0 100 100" class="palette-preview">
-					<rect x="0" y="0" width="50" height="50" fill={chroma.oklch(brightness4, 0.2, hue+160).hex()} />
-					<polygon points="0,50 25,75 0,100 -25,75" fill={chroma.oklch(brightness1, 0.2, hue+40).hex()} />
-					<polygon points="0,50 50,50 75,75 25,75" fill={chroma.oklch(brightness2, 0.2, hue+80).hex()} />
-					<polygon points="50,0 50,50 75,25 75,-25" fill={chroma.oklch(brightness3, 0.2, hue+120).hex()} />
-				</svg>
-			</button>
-		</div>
+		<input id="rotation" type="range" min="0" max="360" step="1" bind:value={rotation} />
+		<label for="rotation">Rotation (color4): {rotation}°</label>
 	</div>
-	{#if dynamicColorMode}
 	<div class="control-item">
 		<input id="hue" type="range" min="120" max="360" step="1" bind:value={hue} />
 		<label for="hue">Color (hue): {hue}</label>
@@ -164,7 +115,6 @@
 			<label for="gradient" class="switch-label"></label>
 		</div>
 	</div>
-	{/if}
 </div>
 
 <div class="svg-container">
@@ -172,51 +122,41 @@
 		{#each Array(20) as _, j}
 			<g transform="translate({(j - 10) * breite2} {(j - 10) * (breite1 + breite2)} )">
 				{#each Array(20) as _, i}
+					{@const corners = getRotatedRectCorners(rotation)}
 					<g transform="translate({(i - 10) * (breite1 + breite2)} {(i - 10) * -breite2})">
-					<rect transform="translate(0 0)" width={breite1} height={breite1} fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} />
+					<!-- Rotiertes Rechteck (color4) -->
+					<rect 
+						transform="translate(0 0) rotate({rotation} {breite1/2} {breite1/2})" 
+						width={breite1} 
+						height={breite1} 
+						fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} 
+					/>
+					
 					<polygon
 						transform="translate(0 {breite1 + breite2})"
 						points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0"
 						fill={gradientMode ? getColor(brightness1, i, j, 40) : color1}
 						/>
+						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
 						<polygon
 							transform="translate(0)"
-							points="0 {breite1}, {breite1} {breite1}, {breite1 + breite2} {breite1 +
+							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {breite1 + breite2} {breite1 +
 								breite2}, {breite2} {breite1 + breite2}"
 							fill={gradientMode ? getColor(brightness2, i, j, 80) : color2}
 						/>
+						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
 						<polygon
 							transform="translate(0)"
-							points="{breite1} 0, {breite1} {breite1}, {breite1 + breite2} {breite1 -
+							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {breite1 + breite2} {breite1 -
 								breite2}, {breite1 + breite2} {-breite2}"
 							fill={gradientMode ? getColor(brightness3, i, j, 120) : color3}
 						/>
 					</g>
 
-					<!-- <polygon transform="translate({(breite1+breite2)*i+breite1+breite2} {(breite1+breite2)*i+breite1})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
-
-					<!-- <polygon transform="translate({-400+i*150} {0-i*50}) rotate({0}) " points="0 0 100 0 150 50 50 50" fill="hotpink" />
-                    <polygon transform="translate({-200+i*150} {0-i*50}) rotate({90}) " points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-                    <rect transform="translate({-350+i*150} {50-i*50})" width={breite1} height={breite1} fill="#ff0" />
-                    <polygon transform="translate({-400+i*150} {0-i*50})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
 				{/each}
 			</g>
 		{/each}
 
-		<!-- <rect transform="translate({200} {200})" width={breite1} height={breite1} fill="#ff0" />
-		<polygon transform="translate({200} {200+breite1+breite2})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" />
-
-		<rect transform="translate({200+breite1+breite2} {200-breite2})" width={breite1} height={breite1} fill="#ff0" />
-		<polygon transform="translate({200+breite1+breite2} {200+breite1+breite2-breite2})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
-
-		<!-- <polygon transform="translate(0 200)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(200 200) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(150 150)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(350 150) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(300 100)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(500 100) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" /> -->
 	</svg>
 </div>
 
@@ -284,37 +224,5 @@
 
 	.switch:checked + .switch-label::before {
 		transform: translateX(30px);
-	}
-
-	.palette-button {
-		width: 80px;
-		height: 80px;
-		border: 3px solid transparent;
-		border-radius: 8px;
-		background: white;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		padding: 5px;
-	}
-
-	.palette-button:hover {
-		transform: scale(1.05);
-	}
-
-	.palette-button.active {
-		border-color: #4CAF50;
-		box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-	}
-
-	.palette-preview {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 10px;
-		flex-wrap: wrap;
 	}
 </style>

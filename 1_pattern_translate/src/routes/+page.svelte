@@ -8,7 +8,9 @@
 	// import Pattern from '$lib/components/5_PatternTriangle.svelte';
 	// import Pattern from '$lib/components/6_PatternParalellogramm3.svelte';
 	// import Pattern from '$lib/components/7_PatternCubes.svelte';
-	import Pattern from '$lib/components/4_PatternParalellogramme2bcolors.svelte';
+	// import Pattern from '$lib/components/4_PatternParalellogramme2bcolors.svelte';
+	import Pattern from '$lib/components/4_PatternParalellogramme2c.svelte';
+
 
 </script>
 
