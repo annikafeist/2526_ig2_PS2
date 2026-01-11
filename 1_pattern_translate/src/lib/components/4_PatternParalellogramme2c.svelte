@@ -95,8 +95,8 @@
 		<label for="breite2">Width2: {breite2.toFixed(2)}</label>
 	</div>
 	<div class="control-item">
-		<input id="rotation" type="range" min="0" max="360" step="1" bind:value={rotation} />
-		<label for="rotation">Rotation (color4): {rotation}°</label>
+		<input id="rotation" type="range" min="-360" max="0" step="1" bind:value={rotation} />
+		<label for="rotation">Rotation: {rotation}°</label>
 	</div>
 	<div class="control-item">
 		<input id="hue" type="range" min="120" max="360" step="1" bind:value={hue} />
@@ -123,6 +123,10 @@
 			<g transform="translate({(j - 10) * breite2} {(j - 10) * (breite1 + breite2)} )">
 				{#each Array(20) as _, i}
 					{@const corners = getRotatedRectCorners(rotation)}
+					{@const nextCorners = getRotatedRectCorners(rotation)}
+					{@const rightCorners = getRotatedRectCorners(rotation)}
+					{@const bottomCorners = getRotatedRectCorners(rotation)}
+					{@const bottomRightCorners = getRotatedRectCorners(rotation)}
 					<g transform="translate({(i - 10) * (breite1 + breite2)} {(i - 10) * -breite2})">
 					<!-- Rotiertes Rechteck (color4) -->
 					<rect 
@@ -133,22 +137,20 @@
 					/>
 					
 					<polygon
-						transform="translate(0 {breite1 + breite2})"
-						points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0"
+						transform="translate(0)"
+						points="{corners[2].x} {corners[2].y}, {bottomCorners[1].x + breite2} {bottomCorners[1].y + (breite1 + breite2)}, {bottomRightCorners[0].x + (breite1 + breite2) + breite2} {bottomRightCorners[0].y + (breite1 + breite2) - breite2}, {rightCorners[3].x + (breite1 + breite2)} {rightCorners[3].y - breite2}"
 						fill={gradientMode ? getColor(brightness1, i, j, 40) : color1}
 						/>
 						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
 						<polygon
 							transform="translate(0)"
-							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {breite1 + breite2} {breite1 +
-								breite2}, {breite2} {breite1 + breite2}"
+							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {nextCorners[1].x + breite2} {nextCorners[1].y + (breite1 + breite2)}, {nextCorners[0].x + breite2} {nextCorners[0].y + (breite1 + breite2)},"
 							fill={gradientMode ? getColor(brightness2, i, j, 80) : color2}
 						/>
 						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
 						<polygon
 							transform="translate(0)"
-							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {breite1 + breite2} {breite1 -
-								breite2}, {breite1 + breite2} {-breite2}"
+							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {nextCorners[3].x + (breite1 + breite2)} {nextCorners[3].y - breite2}, {nextCorners[0].x + (breite1 + breite2)} {nextCorners[0].y - breite2}"
 							fill={gradientMode ? getColor(brightness3, i, j, 120) : color3}
 						/>
 					</g>

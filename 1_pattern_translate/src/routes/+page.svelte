@@ -1,4 +1,7 @@
 <script>
+
+	import UiPattern from '$lib/components/1_ui_pattern.svelte';
+
 	import Header from '$lib/components/Header.svelte';
 	// import Pattern from '$lib/components/1_PatternRect.svelte';	
 	// import Pattern from '$lib/components/2_PatternRectStruct.svelte';	
@@ -8,9 +11,8 @@
 	// import Pattern from '$lib/components/5_PatternTriangle.svelte';
 	// import Pattern from '$lib/components/6_PatternParalellogramm3.svelte';
 	// import Pattern from '$lib/components/7_PatternCubes.svelte';
-	// import Pattern from '$lib/components/4_PatternParalellogramme2bcolors.svelte';
-	import Pattern from '$lib/components/4_PatternParalellogramme2c.svelte';
-
+	import Pattern from '$lib/components/4_PatternParalellogramme2bcolors.svelte';
+	// import Pattern from '$lib/components/4_PatternParalellogramme2c.svelte';
 
 </script>
 
@@ -18,5 +20,6 @@
 	<Header />
 	<main class="app-main">
 		<Pattern />
+		<UiPattern />
 	</main>
 </div>

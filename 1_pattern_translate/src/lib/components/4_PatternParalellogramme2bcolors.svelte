@@ -69,8 +69,6 @@
 	const squareSize = 1000 / squareCount;
 	const offset = squareSize / 4; // 45-Grad-Versatz
 
-	let breite1 = $state(50);
-	let breite2 = $state(50);
 	let rotation = $state(0); // Rotation in Grad
 
 	// Funktion zur Berechnung der Eckpunkte des rotierten Rechtecks
@@ -82,14 +80,14 @@
 		// Die vier Ecken des Rechtecks (unrotiert)
 		const corners = [
 			{ x: 0, y: 0 },           // oben links
-			{ x: breite1, y: 0 },     // oben rechts
-			{ x: breite1, y: breite1 },  // unten rechts
-			{ x: 0, y: breite1 }      // unten links
+			{ x: 50, y: 0 },     // oben rechts
+			{ x: 50, y: 50 },  // unten rechts
+			{ x: 0, y: 50 }      // unten links
 		];
 		
 		// Rotiere um den Mittelpunkt des Rechtecks
-		const centerX = breite1 / 2;
-		const centerY = breite1 / 2;
+		const centerX = 50 / 2;
+		const centerY = 50 / 2;
 		
 		return corners.map(corner => ({
 			x: centerX + (corner.x - centerX) * cos - (corner.y - centerY) * sin,
@@ -107,14 +105,6 @@
 </script>
 
 <div id="control">
-	<div class="control-item">
-		<input id="breite1" type="range" min="33" max="100" step="0.1" bind:value={breite1} />
-		<label for="breite1">Width1: {breite1.toFixed(2)}</label>
-	</div>
-	<div class="control-item">
-		<input id="breite2" type="range" min="33" max="100" step="0.1" bind:value={breite2} />
-		<label for="breite2">Width2: {breite2.toFixed(2)}</label>
-	</div>
 	<div class="control-item">
 		<label>Farbmodus</label>
 		<div class="button-group">
@@ -170,44 +160,44 @@
 <div class="svg-container">
 	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">
 		{#each Array(20) as _, j}
-			<g transform="translate({(j - 10) * breite2} {(j - 10) * (breite1 + breite2)} )">
+			<g transform="translate({(j - 10) * 50} {(j - 10) * (50 + 50)} )">
 				{#each Array(20) as _, i}
-					<g transform="translate({(i - 10) * (breite1 + breite2)} {(i - 10) * -breite2})">
-					<rect transform="translate(0 0)" width={breite1} height={breite1} fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} />
+					<g transform="translate({(i - 10) * (50 + 50)} {(i - 10) * -50})">
+					<rect transform="translate(0 0)" width={50} height={50} fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} />
 					<polygon
-						transform="translate(0 {breite1 + breite2})"
-						points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0"
+						transform="translate(0 {50 + 50})"
+						points="0 {-50} {50} 0 0 {50} {-50} 0"
 						fill={gradientMode ? getColor(brightness1, i, j, 40) : color1}
 						/>
 						<polygon
 							transform="translate(0)"
-							points="0 {breite1}, {breite1} {breite1}, {breite1 + breite2} {breite1 +
-								breite2}, {breite2} {breite1 + breite2}"
+							points="0 {50}, {50} {50}, {50 + 50} {50 +
+								50}, {50} {50 + 50}"
 							fill={gradientMode ? getColor(brightness2, i, j, 80) : color2}
 						/>
 						<polygon
 							transform="translate(0)"
-							points="{breite1} 0, {breite1} {breite1}, {breite1 + breite2} {breite1 -
-								breite2}, {breite1 + breite2} {-breite2}"
+							points="{50} 0, {50} {50}, {50 + 50} {50 -
+								50}, {50 + 50} {-50}"
 							fill={gradientMode ? getColor(brightness3, i, j, 120) : color3}
 						/>
 					</g>
 
-					<!-- <polygon transform="translate({(breite1+breite2)*i+breite1+breite2} {(breite1+breite2)*i+breite1})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
+					<!-- <polygon transform="translate({(50+50)*i+50+50} {(50+50)*i+50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
 
 					<!-- <polygon transform="translate({-400+i*150} {0-i*50}) rotate({0}) " points="0 0 100 0 150 50 50 50" fill="hotpink" />
                     <polygon transform="translate({-200+i*150} {0-i*50}) rotate({90}) " points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-                    <rect transform="translate({-350+i*150} {50-i*50})" width={breite1} height={breite1} fill="#ff0" />
-                    <polygon transform="translate({-400+i*150} {0-i*50})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
+                    <rect transform="translate({-350+i*150} {50-i*50})" width={50} height={50} fill="#ff0" />
+                    <polygon transform="translate({-400+i*150} {0-i*50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
 				{/each}
 			</g>
 		{/each}
 
-		<!-- <rect transform="translate({200} {200})" width={breite1} height={breite1} fill="#ff0" />
-		<polygon transform="translate({200} {200+breite1+breite2})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" />
+		<!-- <rect transform="translate({200} {200})" width={50} height={50} fill="#ff0" />
+		<polygon transform="translate({200} {200+50+50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" />
 
-		<rect transform="translate({200+breite1+breite2} {200-breite2})" width={breite1} height={breite1} fill="#ff0" />
-		<polygon transform="translate({200+breite1+breite2} {200+breite1+breite2-breite2})" points="0 {-breite2} {breite2} 0 0 {breite2} {-breite2} 0" fill="#0ff" /> -->
+		<rect transform="translate({200+50+50} {200-50})" width={50} height={50} fill="#ff0" />
+		<polygon transform="translate({200+50+50} {200+50+50-50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
 
 		<!-- <polygon transform="translate(0 200)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
         <polygon transform="translate(200 200) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
