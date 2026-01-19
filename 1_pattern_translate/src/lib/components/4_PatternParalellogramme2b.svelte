@@ -8,12 +8,14 @@
 -->
 
 <script>
+	import Slider from '$lib/ui/Slider.svelte';
+
 	const squareCount = 20;
 	const squareSize = 1000 / squareCount;
 	const offset = squareSize / 4; // 45-Grad-Versatz
 
 	let breite1 = 50;
-	let breite2 = 25;
+	let breite2 = 50;
 
 	// function calculateSizeCords1(xi, yi) {
 
@@ -25,14 +27,8 @@
 </script>
 
 <div id="control">
-	<div class="control-item">
-		<input type="range" min="10" max="100" step="0.1" bind:value={breite1} />
-		<label>Breite1: {breite1.toFixed(2)}</label>
-	</div>
-	<div class="control-item">
-		<input type="range" min="10" max="100" step="0.1" bind:value={breite2} />
-		<label>Breite2: {breite2.toFixed(2)}</label>
-	</div>
+	<Slider bind:value={breite1} min={35} max={95} step={0.1} label="Breite1: {breite1.toFixed(2)}" />
+	<Slider bind:value={breite2} min={35} max={95} step={0.1} label="Breite2: {breite2.toFixed(2)}" />
 </div>
 
 <div class="svg-container">

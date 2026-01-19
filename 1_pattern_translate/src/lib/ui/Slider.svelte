@@ -193,7 +193,7 @@
 		position: relative;
 		top: 0px;
 		left: 1px;
-		width: 45px;
+		width: 50px;
 		height: 20px;
 		background: #666;
 		border: 1px solid #777;

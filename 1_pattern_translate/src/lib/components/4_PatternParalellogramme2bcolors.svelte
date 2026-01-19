@@ -16,170 +16,100 @@
 
 <script>
 	import chroma from 'chroma-js';
+	import Toggle from '$lib/ui/Toggle.svelte';
+	import Slider from '$lib/ui/Slider.svelte';
+	import EditableColorPalette from '$lib/ui/EditableColorPalette.svelte';
 
-	let hue = $state(120);
 	let invertBrightness = $state(false); // false = normal, true = invertiert
-	let gradientMode = $state(false); // false = statisch, true = Farbverlauf
-	let colorPaletteActive = $state(false); // Toggle für die Farbpalette
-	let dynamicColorMode = $state(true); // Toggle für dynamische Farben
+	let gradientIntensity = $state(0); // 0 = kein Farbverlauf, höher = stärkerer Verlauf
 
 	// Farbpalette
-	const paletteColors = {
-		ebony: '#555D50',
-		artichoke: '#8A9A5B',
-		antiqueBrass: '#CD7F32',
-		desertSand: '#EDC9AF'
-	};
+	let paletteColors = $state(['#555D50', '#8A9A5B', '#CD7F32', '#EDC9AF']);
+	let selectedColorIndex = $state(0);
 
-	// Funktion zum Umschalten zwischen den Modi
-	function togglePalette() {
-		colorPaletteActive = true;
-		dynamicColorMode = false;
+	// Funktion zum Anpassen der Farbe basierend auf Helligkeit
+	function adjustColor(baseColor, hueShift = 0) {
+		let color = chroma(baseColor);
+		
+		// Hue-Anpassung
+		if (hueShift !== 0) {
+			const [l, c, h] = color.oklch();
+			color = chroma.oklch(l, c, (h || 0) + hueShift);
+		}
+		
+		// Helligkeit invertieren
+		if (invertBrightness) {
+			const [l, c, h] = color.oklch();
+			// Invertiere die Helligkeit (0.9 wird zu ~0.4, 0.4 wird zu ~0.9)
+			const newL = 1.3 - l;
+			color = chroma.oklch(Math.max(0.2, Math.min(0.95, newL)), c, h);
+		}
+		
+		return color.hex();
 	}
-
-	function toggleDynamicMode() {
-		dynamicColorMode = true;
-		colorPaletteActive = false;
-	}
-
-	// Dynamische Helligkeitswerte die zwischen normal und invertiert wechseln
-	let brightness1 = $derived(invertBrightness ? 0.9 : 0.4);
-	let brightness2 = $derived(invertBrightness ? 0.7 : 0.6);
-	let brightness3 = $derived(invertBrightness ? 0.6 : 0.7);
-	let brightness4 = $derived(invertBrightness ? 0.4 : 0.9);
 
 	// Funktion zur Berechnung der Farbe basierend auf Position (für Farbverlauf)
-	function getColor(baseHue, i, j, offset) {
-		if (gradientMode) {
+	function getColor(baseColor, i, j) {
+		if (gradientIntensity > 0) {
 			// Berechne Farbshift basierend auf Position im Grid
 			const position = (i + j) / 40; // Normalisiert auf 0-1
-			const hueShift = position * 360; // Feste Intensität von 360
-			return chroma.oklch(baseHue, 0.2, hue + offset + hueShift).hex();
+			const hueShift = position * gradientIntensity; // Intensität vom Slider
+			return adjustColor(baseColor, hueShift);
 		}
-		return chroma.oklch(baseHue, 0.2, hue + offset).hex();
+		return adjustColor(baseColor, 0);
 	}
 
-	let color1 = $derived(colorPaletteActive ? paletteColors.ebony : chroma.oklch(brightness1, 0.2, hue+40).hex());
-	let color2 = $derived(colorPaletteActive ? paletteColors.artichoke : chroma.oklch(brightness2, 0.2, hue+80).hex());
-	let color3 = $derived(colorPaletteActive ? paletteColors.antiqueBrass : chroma.oklch(brightness3, 0.2, hue+120).hex());
-	let color4 = $derived(colorPaletteActive ? paletteColors.desertSand : chroma.oklch(brightness4, 0.2, hue+160).hex());
+	let color1 = $derived(paletteColors[0]);
+	let color2 = $derived(paletteColors[1]);
+	let color3 = $derived(paletteColors[2]);
+	let color4 = $derived(paletteColors[3]);
 	// $inspect(color1);
 
 	const squareCount = 20;
 	const squareSize = 1000 / squareCount;
 	const offset = squareSize / 4; // 45-Grad-Versatz
 
-	let rotation = $state(0); // Rotation in Grad
-
-	// Funktion zur Berechnung der Eckpunkte des rotierten Rechtecks
-	function getRotatedRectCorners(rotation) {
-		const rad = (rotation * Math.PI) / 180;
-		const cos = Math.cos(rad);
-		const sin = Math.sin(rad);
-		
-		// Die vier Ecken des Rechtecks (unrotiert)
-		const corners = [
-			{ x: 0, y: 0 },           // oben links
-			{ x: 50, y: 0 },     // oben rechts
-			{ x: 50, y: 50 },  // unten rechts
-			{ x: 0, y: 50 }      // unten links
-		];
-		
-		// Rotiere um den Mittelpunkt des Rechtecks
-		const centerX = 50 / 2;
-		const centerY = 50 / 2;
-		
-		return corners.map(corner => ({
-			x: centerX + (corner.x - centerX) * cos - (corner.y - centerY) * sin,
-			y: centerY + (corner.x - centerX) * sin + (corner.y - centerY) * cos
-		}));
-	}
-
-	// function calculateSizeCords1(xi, yi) {
-
-	// }
-
-	// function calculateSizeCords2(xi, yi) {
-
-	// }
+	const rotation = 0; // Rotation in Grad
+	const scale = 1; // Skalierung
+	const spacing = 100; // Abstand zwischen Elementen
 </script>
 
 <div id="control">
 	<div class="control-item">
-		<label>Farbmodus</label>
-		<div class="button-group">
-			<button 
-				class="palette-button" 
-				class:active={colorPaletteActive}
-				onclick={togglePalette}
-				title="Farbpalette"
-			>
-				<svg viewBox="0 0 100 100" class="palette-preview">
-					<rect x="0" y="0" width="50" height="50" fill={paletteColors.desertSand} />
-					<polygon points="0,50 25,75 0,100 -25,75" fill={paletteColors.ebony} />
-					<polygon points="0,50 50,50 75,75 25,75" fill={paletteColors.artichoke} />
-					<polygon points="50,0 50,50 75,25 75,-25" fill={paletteColors.antiqueBrass} />
-				</svg>
-			</button>
-			<button 
-				class="palette-button" 
-				class:active={dynamicColorMode}
-				onclick={toggleDynamicMode}
-				title="Dynamische Farben"
-			>
-				<svg viewBox="0 0 100 100" class="palette-preview">
-					<rect x="0" y="0" width="50" height="50" fill={chroma.oklch(brightness4, 0.2, hue+160).hex()} />
-					<polygon points="0,50 25,75 0,100 -25,75" fill={chroma.oklch(brightness1, 0.2, hue+40).hex()} />
-					<polygon points="0,50 50,50 75,75 25,75" fill={chroma.oklch(brightness2, 0.2, hue+80).hex()} />
-					<polygon points="50,0 50,50 75,25 75,-25" fill={chroma.oklch(brightness3, 0.2, hue+120).hex()} />
-				</svg>
-			</button>
-		</div>
+		<label>Farbpalette bearbeiten</label>
+		<EditableColorPalette bind:colors={paletteColors} bind:selectedColorIndex width={200} swatchSize={35} />
 	</div>
-	{#if dynamicColorMode}
+
 	<div class="control-item">
-		<input id="hue" type="range" min="120" max="360" step="1" bind:value={hue} />
-		<label for="hue">Color (hue): {hue}</label>
-	</div>	<div class="control-item">
-		<label for="brightness">invert</label>
-		<div class="switch-container">
-			<input id="brightness" type="checkbox" bind:checked={invertBrightness} class="switch" />
-			<label for="brightness" class="switch-label"></label>
-		</div>
+		<label for="brightness">Helligkeit invertieren</label>
+		<Toggle bind:value={invertBrightness} label="Invert" />
 	</div>
-	<div class="control-item">
-		<label for="gradient">Farbverlauf</label>
-		<div class="switch-container">
-			<input id="gradient" type="checkbox" bind:checked={gradientMode} class="switch" />
-			<label for="gradient" class="switch-label"></label>
-		</div>
-	</div>
-	{/if}
+	<Slider bind:value={gradientIntensity} min={0} max={360} step={1} label="Farbverlauf-Intensität: {gradientIntensity.toFixed(0)}" />
 </div>
 
 <div class="svg-container">
 	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">
 		{#each Array(20) as _, j}
-			<g transform="translate({(j - 10) * 50} {(j - 10) * (50 + 50)} )">
+			<g transform="translate({(j - 10) * 50 * (spacing / 100)} {(j - 10) * (50 + 50) * (spacing / 100)} )">
 				{#each Array(20) as _, i}
-					<g transform="translate({(i - 10) * (50 + 50)} {(i - 10) * -50})">
-					<rect transform="translate(0 0)" width={50} height={50} fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} />
+					<g transform="translate({(i - 10) * (50 + 50) * (spacing / 100)} {(i - 10) * -50 * (spacing / 100)}) rotate({rotation}) scale({scale})">
+					<rect transform="translate(0 0)" width={50} height={50} fill={getColor(color4, i, j)} />
 					<polygon
 						transform="translate(0 {50 + 50})"
 						points="0 {-50} {50} 0 0 {50} {-50} 0"
-						fill={gradientMode ? getColor(brightness1, i, j, 40) : color1}
+						fill={getColor(color1, i, j)}
 						/>
 						<polygon
 							transform="translate(0)"
 							points="0 {50}, {50} {50}, {50 + 50} {50 +
 								50}, {50} {50 + 50}"
-							fill={gradientMode ? getColor(brightness2, i, j, 80) : color2}
+							fill={getColor(color2, i, j)}
 						/>
 						<polygon
 							transform="translate(0)"
 							points="{50} 0, {50} {50}, {50 + 50} {50 -
 								50}, {50 + 50} {-50}"
-							fill={gradientMode ? getColor(brightness3, i, j, 120) : color3}
+							fill={getColor(color3, i, j)}
 						/>
 					</g>
 
@@ -221,90 +151,14 @@
 	.control-item {
 		display: flex;
 		flex-direction: column;
-		gap: 5px;
-	}
-
-	.control-item input {
-		width: 100%;
+		gap: 8px;
 	}
 
 	.control-item label {
 		font-size: 14px;
-	}
-
-	.switch-container {
-		position: relative;
-		width: 60px;
-		height: 30px;
-	}
-
-	.switch {
-		opacity: 0;
-		width: 0;
-		height: 0;
-	}
-
-	.switch-label {
-		position: absolute;
-		cursor: pointer;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: #ccc;
-		transition: 0.4s;
-		border-radius: 30px;
-	}
-
-	.switch-label::before {
-		position: absolute;
-		content: "";
-		height: 22px;
-		width: 22px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
-		transition: 0.4s;
-		border-radius: 50%;
-	}
-
-	.switch:checked + .switch-label {
-		background-color: #4CAF50;
-	}
-
-	.switch:checked + .switch-label::before {
-		transform: translateX(30px);
-	}
-
-	.palette-button {
-		width: 80px;
-		height: 80px;
-		border: 3px solid transparent;
-		border-radius: 8px;
-		background: white;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		padding: 5px;
-	}
-
-	.palette-button:hover {
-		transform: scale(1.05);
-	}
-
-	.palette-button.active {
-		border-color: #4CAF50;
-		box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-	}
-
-	.palette-preview {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 10px;
-		flex-wrap: wrap;
+		font-weight: 500;
 	}
 </style>
+
+<!-- farben nicht einzeln bearbeitbar für jedes element sondern eine feste farbe 
+ und jedes element hat eventuell eine andere helligkeit und saturation und so -->

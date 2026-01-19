@@ -274,7 +274,7 @@
 		position: absolute;
 		top: 0px;
 		left: 1px;
-		width: 45px;
+		width: 65px;
 		height: 20px;
 		background: #666;
 		border: 1px solid #888;

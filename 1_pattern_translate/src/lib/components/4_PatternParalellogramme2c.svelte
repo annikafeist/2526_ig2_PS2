@@ -16,27 +16,16 @@
 
 <script>
 	import chroma from 'chroma-js';
+	import Slider from '$lib/ui/Slider.svelte';
 
-	let hue = $state(120);
-	let invertBrightness = $state(false); // false = normal, true = invertiert
-	let gradientMode = $state(false); // false = statisch, true = Farbverlauf
+	// Fixed brightness values
+	let brightness1 = 0.4;
+	let brightness2 = 0.6;
+	let brightness3 = 0.7;
+	let brightness4 = 0.9;
 
-	// Dynamische Helligkeitswerte die zwischen normal und invertiert wechseln
-	let brightness1 = $derived(invertBrightness ? 0.9 : 0.4);
-	let brightness2 = $derived(invertBrightness ? 0.7 : 0.6);
-	let brightness3 = $derived(invertBrightness ? 0.6 : 0.7);
-	let brightness4 = $derived(invertBrightness ? 0.4 : 0.9);
-
-	// Funktion zur Berechnung der Farbe basierend auf Position (für Farbverlauf)
-	function getColor(baseHue, i, j, offset) {
-		if (gradientMode) {
-			// Berechne Farbshift basierend auf Position im Grid
-			const position = (i + j) / 40; // Normalisiert auf 0-1
-			const hueShift = position * 360; // Feste Intensität von 360
-			return chroma.oklch(baseHue, 0.2, hue + offset + hueShift).hex();
-		}
-		return chroma.oklch(baseHue, 0.2, hue + offset).hex();
-	}
+	// Fixed hue value
+	const hue = 120;
 
 	let color1 = $derived(chroma.oklch(brightness1, 0.2, hue+40).hex());
 	let color2 = $derived(chroma.oklch(brightness2, 0.2, hue+80).hex());
@@ -86,35 +75,9 @@
 </script>
 
 <div id="control">
-	<div class="control-item">
-		<input id="breite1" type="range" min="33" max="100" step="0.1" bind:value={breite1} />
-		<label for="breite1">Width1: {breite1.toFixed(2)}</label>
-	</div>
-	<div class="control-item">
-		<input id="breite2" type="range" min="33" max="100" step="0.1" bind:value={breite2} />
-		<label for="breite2">Width2: {breite2.toFixed(2)}</label>
-	</div>
-	<div class="control-item">
-		<input id="rotation" type="range" min="-360" max="0" step="1" bind:value={rotation} />
-		<label for="rotation">Rotation: {rotation}°</label>
-	</div>
-	<div class="control-item">
-		<input id="hue" type="range" min="120" max="360" step="1" bind:value={hue} />
-		<label for="hue">Color (hue): {hue}</label>
-	</div>	<div class="control-item">
-		<label for="brightness">invert</label>
-		<div class="switch-container">
-			<input id="brightness" type="checkbox" bind:checked={invertBrightness} class="switch" />
-			<label for="brightness" class="switch-label"></label>
-		</div>
-	</div>
-	<div class="control-item">
-		<label for="gradient">Farbverlauf</label>
-		<div class="switch-container">
-			<input id="gradient" type="checkbox" bind:checked={gradientMode} class="switch" />
-			<label for="gradient" class="switch-label"></label>
-		</div>
-	</div>
+	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Width1: {breite1.toFixed(2)}" />
+	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Width2: {breite2.toFixed(2)}" />
+	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation: {rotation}°" />
 </div>
 
 <div class="svg-container">
@@ -133,25 +96,25 @@
 						transform="translate(0 0) rotate({rotation} {breite1/2} {breite1/2})" 
 						width={breite1} 
 						height={breite1} 
-						fill={gradientMode ? getColor(brightness4, i, j, 160) : color4} 
+						fill={color4} 
 					/>
 					
 					<polygon
 						transform="translate(0)"
 						points="{corners[2].x} {corners[2].y}, {bottomCorners[1].x + breite2} {bottomCorners[1].y + (breite1 + breite2)}, {bottomRightCorners[0].x + (breite1 + breite2) + breite2} {bottomRightCorners[0].y + (breite1 + breite2) - breite2}, {rightCorners[3].x + (breite1 + breite2)} {rightCorners[3].y - breite2}"
-						fill={gradientMode ? getColor(brightness1, i, j, 40) : color1}
+						fill={color1}
 						/>
 						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {nextCorners[1].x + breite2} {nextCorners[1].y + (breite1 + breite2)}, {nextCorners[0].x + breite2} {nextCorners[0].y + (breite1 + breite2)},"
-							fill={gradientMode ? getColor(brightness2, i, j, 80) : color2}
+							fill={color2}
 						/>
 						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {nextCorners[3].x + (breite1 + breite2)} {nextCorners[3].y - breite2}, {nextCorners[0].x + (breite1 + breite2)} {nextCorners[0].y - breite2}"
-							fill={gradientMode ? getColor(brightness3, i, j, 120) : color3}
+							fill={color3}
 						/>
 					</g>
 
@@ -168,6 +131,7 @@
 		flex-direction: column;
 		padding: 20px;
 		gap: 20px;
+		width: 300px;
 	}
 
 	.control-item {
@@ -183,48 +147,6 @@
 	.control-item label {
 		font-size: 14px;
 	}
-
-	.switch-container {
-		position: relative;
-		width: 60px;
-		height: 30px;
-	}
-
-	.switch {
-		opacity: 0;
-		width: 0;
-		height: 0;
-	}
-
-	.switch-label {
-		position: absolute;
-		cursor: pointer;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: #ccc;
-		transition: 0.4s;
-		border-radius: 30px;
-	}
-
-	.switch-label::before {
-		position: absolute;
-		content: "";
-		height: 22px;
-		width: 22px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
-		transition: 0.4s;
-		border-radius: 50%;
-	}
-
-	.switch:checked + .switch-label {
-		background-color: #4CAF50;
-	}
-
-	.switch:checked + .switch-label::before {
-		transform: translateX(30px);
-	}
 </style>
+
+
