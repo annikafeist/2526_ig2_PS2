@@ -101,6 +101,7 @@
 	const spacing = 100; // Abstand zwischen Elementen
 </script>
 
+<div class="sidebar-right">
 <div id="control">
 	<div class="control-item">
 		<Slider bind:value={hue1} min={0} max={360} step={1} label="Hue1: {Math.round(hue1)}°" />
@@ -122,6 +123,7 @@
 		label="Farbverlauf-Intensität: {gradientIntensity.toFixed(0)}"
 	/>
 </div>
+</div>	
 
 <div class="svg-container">
 	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">

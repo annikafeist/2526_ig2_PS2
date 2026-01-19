@@ -74,11 +74,14 @@
 	// }
 </script>
 
+<div class="sidebar-right">
 <div id="control">
 	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Width1: {breite1.toFixed(2)}" />
 	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Width2: {breite2.toFixed(2)}" />
 	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation: {rotation}°" />
 </div>
+</div>
+
 
 <div class="svg-container">
 	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">
