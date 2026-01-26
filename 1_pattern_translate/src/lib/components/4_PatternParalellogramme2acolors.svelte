@@ -22,42 +22,16 @@
 	let invertBrightness = $state(false); // false = normal, true = invertiert
 	let gradientIntensity = $state(0); // 0 = kein Farbverlauf, höher = stärkerer Verlauf
 
-	// Zwei separate Hue-Slider mit gekoppelter Bewegung
+	// Ein Hue-Slider für beide Farbtöne
 	let hue1 = $state(0); // Farbton für Element 1 und 3 (0-360)
-	let hue2 = $state(40); // Farbton für Element 2 und 4 (0-360)
-	
-	// Track welcher Slider zuletzt bewegt wurde
-	let lastChangedHue1 = $state(0);
-	let lastChangedHue2 = $state(40);
-	
-	// Wenn hue1 sich ändert, aktualisiere hue2
-	$effect(() => {
-		if (hue1 !== lastChangedHue1) {
-			lastChangedHue1 = hue1;
-			// Begrenze hue2 auf den Bereich [0, 360]
-			const newHue2 = hue1 + 40;
-			hue2 = Math.max(0, Math.min(360, newHue2));
-			lastChangedHue2 = hue2;
-		}
-	});
-	
-	// Wenn hue2 sich ändert, aktualisiere hue1
-	$effect(() => {
-		if (hue2 !== lastChangedHue2) {
-			lastChangedHue2 = hue2;
-			// Begrenze hue1 auf den Bereich [0, 360]
-			const newHue1 = hue2 - 40;
-			hue1 = Math.max(0, Math.min(360, newHue1));
-			lastChangedHue1 = hue1;
-		}
-	});
+	let hue2 = $derived((hue1 + 40) % 360); // Farbton für Element 2 und 4, immer 40° mehr als hue1
 
 	// Feste Saturation und Lightness für jedes der 4 Elemente
 	// Format: [Saturation (0-100), Lightness (0-100)]
 	const element1_SL = [100, 35]; // Mittel-dunkel, gesättigt
-	const element2_SL = [80, 60]; // Heller, weniger gesättigt
+	const element2_SL = [70, 80]; // Heller, weniger gesättigt
 	const element3_SL = [100, 15]; // Dunkel, sehr gesättigt
-	const element4_SL = [70, 80]; // Sehr hell, wenig gesättigt
+	const element4_SL = [80, 60]; // Sehr hell, wenig gesättigt
 
 	// Funktion zum Erstellen einer HSL-Farbe aus Hue und fester Saturation/Lightness
 	function createColorFromHue(hue, saturation, lightness, hueShift = 0) {
@@ -96,19 +70,123 @@
 	const squareSize = 1000 / squareCount;
 	const offset = squareSize / 4; // 45-Grad-Versatz
 
-	const rotation = 0; // Rotation in Grad
+	let breite1 = $state(50);
+	let breite2 = $state(50);
+	let rotation = $state(0); // Rotation in Grad
 	const scale = 1; // Skalierung
 	const spacing = 100; // Abstand zwischen Elementen
+
+	// Funktion zur Berechnung der Eckpunkte des rotierten Rechtecks
+	function getRotatedRectCorners(rotation) {
+		const rad = (rotation * Math.PI) / 180;
+		const cos = Math.cos(rad);
+		const sin = Math.sin(rad);
+
+		// Die vier Ecken des Rechtecks (unrotiert)
+		const corners = [
+			{ x: 0, y: 0 }, // oben links
+			{ x: breite1, y: 0 }, // oben rechts
+			{ x: breite1, y: breite1 }, // unten rechts
+			{ x: 0, y: breite1 } // unten links
+		];
+
+		// Rotiere um den Mittelpunkt des Rechtecks
+		const centerX = breite1 / 2;
+		const centerY = breite1 / 2;
+
+		return corners.map((corner) => ({
+			x: centerX + (corner.x - centerX) * cos - (corner.y - centerY) * sin,
+			y: centerY + (corner.x - centerX) * sin + (corner.y - centerY) * cos
+		}));
+	}
 </script>
 
-<div class="sidebar-right">
-<div id="control">
-	<div class="control-item">
-		<Slider bind:value={hue1} min={0} max={360} step={1} label="Hue1: {Math.round(hue1)}°" />
-	</div>
+<div class="svg-container">
+	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">
+		{#each Array(20) as _, j}
+			<g
+				transform="translate({(j - 10) * breite2 * (spacing / 100)} {(j - 10) *
+					(breite1 + breite2) *
+					(spacing / 100)} )"
+			>
+				{#each Array(20) as _, i}
+					{@const corners = getRotatedRectCorners(rotation)}
+					{@const nextCorners = getRotatedRectCorners(rotation)}
+					{@const rightCorners = getRotatedRectCorners(rotation)}
+					{@const bottomCorners = getRotatedRectCorners(rotation)}
+					{@const bottomRightCorners = getRotatedRectCorners(rotation)}
+					<g
+						transform="translate({(i - 10) * (breite1 + breite2) * (spacing / 100)} {(i - 10) *
+							-breite2 *
+							(spacing / 100)})"
+					>
+						<!-- Rotiertes Rechteck (color4) -->
+						<rect
+							transform="translate(0 0) rotate({rotation} {breite1 / 2} {breite1 / 2})"
+							width={breite1}
+							height={breite1}
+							fill={getColor(hue2, element4_SL[0], element4_SL[1], i, j)}
+						/>
 
+						<polygon
+							transform="translate(0)"
+							points="{corners[2].x} {corners[2].y}, {bottomCorners[1].x +
+								breite2} {bottomCorners[1].y + (breite1 + breite2)}, {bottomRightCorners[0].x +
+								(breite1 + breite2) +
+								breite2} {bottomRightCorners[0].y + (breite1 + breite2) - breite2}, {rightCorners[3]
+								.x +
+								(breite1 + breite2)} {rightCorners[3].y - breite2}"
+							fill={getColor(hue1, element1_SL[0], element1_SL[1], i, j)}
+						/>
+						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
+						<polygon
+							transform="translate(0)"
+							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {nextCorners[1]
+								.x + breite2} {nextCorners[1].y + (breite1 + breite2)}, {nextCorners[0].x +
+								breite2} {nextCorners[0].y + (breite1 + breite2)},"
+							fill={getColor(hue2, element2_SL[0], element2_SL[1], i, j)}
+						/>
+						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
+						<polygon
+							transform="translate(0)"
+							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {nextCorners[3]
+								.x +
+								(breite1 + breite2)} {nextCorners[3].y - breite2}, {nextCorners[0].x +
+								(breite1 + breite2)} {nextCorners[0].y - breite2}"
+							fill={getColor(hue1, element3_SL[0], element3_SL[1], i, j)}
+						/>
+					</g>
+				{/each}
+			</g>
+		{/each}
+	</svg>
+</div>
+
+<div class="sidebar-right">
 	<div class="control-item">
-		<Slider bind:value={hue2} min={0} max={360} step={1} label="Hue2: {Math.round(hue2)}°" />
+		<Slider
+			bind:value={breite1}
+			min={30}
+			max={100}
+			step={0.1}
+			label="Width1: {breite1.toFixed(2)}"
+		/>
+		<Slider
+			bind:value={breite2}
+			min={30}
+			max={100}
+			step={0.1}
+			label="Width2: {breite2.toFixed(2)}"
+		/>
+		<Slider
+			bind:value={rotation}
+			min={-90}
+			max={37}
+			step={1}
+			snapValues={[-26, 0]}
+			label="Rotation: {rotation}°"
+		/>
+		<Slider bind:value={hue1} min={0} max={360} step={1} label="Hue: {Math.round(hue1)}°" />
 	</div>
 
 	<div class="control-item">
@@ -123,49 +201,8 @@
 		label="Farbverlauf-Intensität: {gradientIntensity.toFixed(0)}"
 	/>
 </div>
-</div>	
 
-<div class="svg-container">
-	<svg viewBox="-500 -500 1000 1000" class="svg-canvas">
-		{#each Array(20) as _, j}
-			<g
-				transform="translate({(j - 10) * 50 * (spacing / 100)} {(j - 10) *
-					(50 + 50) *
-					(spacing / 100)} )"
-			>
-				{#each Array(20) as _, i}
-					<g
-						transform="translate({(i - 10) * (50 + 50) * (spacing / 100)} {(i - 10) *
-							-50 *
-							(spacing / 100)}) rotate({rotation}) scale({scale})"
-					>
-						<rect
-							transform="translate(0 0)"
-							width={50}
-							height={50}
-							fill={getColor(hue2, element4_SL[0], element4_SL[1], i, j)}
-						/>
-						<polygon
-							transform="translate(0 {50 + 50})"
-							points="0 {-50} {50} 0 0 {50} {-50} 0"
-							fill={getColor(hue1, element1_SL[0], element1_SL[1], i, j)}
-						/>
-						<polygon
-							transform="translate(0)"
-							points="0 {50}, {50} {50}, {50 + 50} {50 + 50}, {50} {50 + 50}"
-							fill={getColor(hue2, element2_SL[0], element2_SL[1], i, j)}
-						/>
-						<polygon
-							transform="translate(0)"
-							points="{50} 0, {50} {50}, {50 + 50} {50 - 50}, {50 + 50} {-50}"
-							fill={getColor(hue1, element3_SL[0], element3_SL[1], i, j)}
-						/>
-					</g>
-				{/each}
-			</g>
-		{/each}
-	</svg>
-</div>
+<!-- Farbpaletten mit festen Farben, dafür kann man dann zb Saturation oder luminess bearbeiten -->
 
 <!-- farben nicht einzeln bearbeitbar für jedes element sondern eine feste farbe 
  und jedes element hat eventuell eine andere helligkeit und saturation und so -->
@@ -218,5 +255,3 @@
 		border-radius: 4px;
 	}
 </style>
-
-<!-- Farbpaletten mit festen Farben, dafür kann man dann zb Saturation oder luminess bearbeiten -->

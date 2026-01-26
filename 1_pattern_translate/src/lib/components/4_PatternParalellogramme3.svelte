@@ -18,19 +18,75 @@
 	import chroma from 'chroma-js';
 	import Slider from '$lib/ui/Slider.svelte';
 
-	// Fixed brightness values
-	let brightness1 = 0.4;
-	let brightness2 = 0.6;
-	let brightness3 = 0.7;
-	let brightness4 = 0.9;
+	// Available colors for selection
+	const availableColors = ['#A2E8A0', '#5D9140', '#00BA61', '#00522A'];
+	
+	// Selected color indices for each tile
+	let selectedColor1 = $state(0);
+	let selectedColor2 = $state(1);
+	let selectedColor3 = $state(2);
+	let selectedColor4 = $state(3);
 
-	// Fixed hue value
-	const hue = 120;
+	// Track previous values to know which one changed
+	let prevColor1 = $state(0);
+	let prevColor2 = $state(1);
+	let prevColor3 = $state(2);
+	let prevColor4 = $state(3);
 
-	let color1 = $derived(chroma.oklch(brightness1, 0.2, hue+40).hex());
-	let color2 = $derived(chroma.oklch(brightness2, 0.2, hue+80).hex());
-	let color3 = $derived(chroma.oklch(brightness3, 0.2, hue+120).hex());
-	let color4 = $derived(chroma.oklch(brightness4, 0.2, hue+160).hex());
+	// Function to find an unused color
+	function findUnusedColor(excludeIndex) {
+		const usedColors = [selectedColor1, selectedColor2, selectedColor3, selectedColor4];
+		for (let i = 0; i < availableColors.length; i++) {
+			if (i !== excludeIndex && !usedColors.includes(i)) {
+				return i;
+			}
+		}
+		// Fallback: return the first available
+		return 0;
+	}
+
+	// Reactive effect to ensure no duplicate colors
+	$effect(() => {
+		const colors = [selectedColor1, selectedColor2, selectedColor3, selectedColor4];
+		const prevColors = [prevColor1, prevColor2, prevColor3, prevColor4];
+		
+		// Find which color changed
+		let changedIndex = -1;
+		for (let i = 0; i < 4; i++) {
+			if (colors[i] !== prevColors[i]) {
+				changedIndex = i;
+				break;
+			}
+		}
+		
+		if (changedIndex !== -1) {
+			const newColorValue = colors[changedIndex];
+			
+			// Check if this color is already used elsewhere
+			for (let i = 0; i < 4; i++) {
+				if (i !== changedIndex && colors[i] === newColorValue) {
+					// Found duplicate, assign unused color to the other element
+					const unusedColor = findUnusedColor(newColorValue);
+					
+					if (i === 0) selectedColor1 = unusedColor;
+					else if (i === 1) selectedColor2 = unusedColor;
+					else if (i === 2) selectedColor3 = unusedColor;
+					else if (i === 3) selectedColor4 = unusedColor;
+				}
+			}
+			
+			// Update previous values
+			prevColor1 = selectedColor1;
+			prevColor2 = selectedColor2;
+			prevColor3 = selectedColor3;
+			prevColor4 = selectedColor4;
+		}
+	});
+
+	let color1 = $derived(availableColors[selectedColor1]);
+	let color2 = $derived(availableColors[selectedColor2]);
+	let color3 = $derived(availableColors[selectedColor3]);
+	let color4 = $derived(availableColors[selectedColor4]);
 	// $inspect(color1);
 
 	const squareCount = 20;
@@ -121,6 +177,50 @@
 </div>
 
 <div class="sidebar-right">
+	<div class="control-item">
+		<label for="color1-select">Element 1 color:</label>
+		<select id="color1-select" bind:value={selectedColor1}>
+			{#each availableColors as color, index}
+				<option value={index}>
+					color {index + 1}
+				</option>
+			{/each}
+		</select>
+	</div>
+
+	<div class="control-item">
+		<label for="color2-select">Element 2 color:</label>
+		<select id="color2-select" bind:value={selectedColor2}>
+			{#each availableColors as color, index}
+				<option value={index}>
+					color {index + 1}
+				</option>
+			{/each}
+		</select>
+	</div>
+
+	<div class="control-item">
+		<label for="color3-select">Element 3 color:</label>
+		<select id="color3-select" bind:value={selectedColor3}>
+			{#each availableColors as color, index}
+				<option value={index}>
+					color {index + 1}
+				</option>
+			{/each}
+		</select>
+	</div>
+
+	<div class="control-item">
+		<label for="color4-select">Element 4 color:</label>
+		<select id="color4-select" bind:value={selectedColor4}>
+			{#each availableColors as color, index}
+				<option value={index}>
+					color {index + 1}
+				</option>
+			{/each}
+		</select>
+	</div>
+
 	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Width1: {breite1.toFixed(2)}" />
 	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Width2: {breite2.toFixed(2)}" />
 	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation: {rotation}°" />
@@ -139,6 +239,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 5px;
+		width: 100%;
+		margin-bottom: 1rem;
 	}
 
 	.control-item input {
@@ -146,7 +248,31 @@
 	}
 
 	.control-item label {
-		font-size: 14px;
+		font-size: 0.75rem;
+		margin-bottom: 0.3rem;
+		color: #ccc;
+	}
+
+	.control-item select {
+		width: 100%;
+		height: 20px;
+		padding: 0 8px;
+		font-size: 0.75rem;
+		border-radius: 4px;
+		border: 1px solid #777;
+		background-color: #666;
+		color: #fff;
+		cursor: pointer;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.control-item select:hover {
+		background-color: #777;
+	}
+
+	.control-item select:focus {
+		outline: none;
+		border-color: #999;
 	}
 </style>
 

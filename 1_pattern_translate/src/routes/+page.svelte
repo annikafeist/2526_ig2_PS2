@@ -9,6 +9,8 @@
 	import PatternParalellogramme2acolors from '$lib/components/4_PatternParalellogramme2acolors.svelte';
 	import PatternParalellogramme2bcolors from '$lib/components/4_PatternParalellogramme2bcolors.svelte';
 	import PatternParalellogramme2c from '$lib/components/4_PatternParalellogramme2c.svelte';
+	import PatternParalellogramme2ccolors from '$lib/components/4_PatternParalellogramme2ccolors.svelte';
+	import PatternParalellogramme3 from '$lib/components/4_PatternParalellogramme3.svelte';	
 	// import PatternTriangle from '$lib/components/5_PatternTriangle.svelte';
 	// import PatternParalellogramm3 from '$lib/components/6_PatternParalellogramm3.svelte';
 	// import PatternCubes from '$lib/components/7_PatternCubes.svelte';
@@ -22,13 +24,25 @@
   },
   {
     name: 'Squares in the Grid (colors1)',
+    component: PatternParalellogramme3,
+    description:
+      'A grid of squares divided into two triangles that can get an offset and size.'
+  },
+  {
+    name: 'Squares in the Grid (colorsB)',
     component: PatternParalellogramme2bcolors,
     description:
       'A grid of squares divided into two triangles that can get an offset and size.'
   },
   {
-    name: 'Squares in the Grid (colors2)',
+    name: 'Squares in the Grid (colorsA)',
     component: PatternParalellogramme2acolors,
+    description:
+      'A grid of squares divided into two triangles that can get an offset and size.'
+  },
+  {
+    name: 'Squares in the Grid (colorsC)',
+    component: PatternParalellogramme2ccolors,
     description:
       'A grid of squares divided into two triangles that can get an offset and size.'
   },

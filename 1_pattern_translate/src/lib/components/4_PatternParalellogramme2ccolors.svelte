@@ -18,14 +18,55 @@
 	import chroma from 'chroma-js';
 	import Toggle from '$lib/ui/Toggle.svelte';
 	import Slider from '$lib/ui/Slider.svelte';
-	import EditableColorPalette from '$lib/ui/EditableColorPalette.svelte';
 
 	let invertBrightness = $state(false); // false = normal, true = invertiert
 	let gradientIntensity = $state(0); // 0 = kein Farbverlauf, höher = stärkerer Verlauf
 
-	// Farbpalette
-	let paletteColors = $state(['#555D50', '#8A9A5B', '#CD7F32', '#EDC9AF']);
-	let selectedColorIndex = $state(0);
+	// Vordefinierte Farbpaletten
+	const colorPalettes = [
+		{
+			name: 'Earth Tones',
+			colors: ['#555D50', '#8A9A5B', '#CD7F32', '#EDC9AF']
+		},
+		{
+			name: 'Black and White',
+			colors: ['#000000', '#444444', '#808080', '#FFFFFF']
+		},
+		{
+			name: 'Sunset Warm',
+			colors: ['#8B2635', '#C84630', '#E87A3E', '#F4B860']
+		},
+		{
+			name: 'Random',
+			colors: ['#FF5733', '#33FF57', '#3357FF', '#F333FF']
+		}
+	];
+
+	let selectedPaletteIndex = $state(0);
+	let randomColors = $state(['#FF5733', '#33FF57', '#3357FF', '#F333FF']);
+
+	// Funktion zum Generieren zufälliger Farben
+	function generateRandomColors() {
+		return [
+			chroma.random().hex(),
+			chroma.random().hex(),
+			chroma.random().hex(),
+			chroma.random().hex()
+		];
+	}
+
+	// Funktion zum Auswählen einer Palette
+	function selectPalette(index) {
+		selectedPaletteIndex = index;
+		if (index === 3) {
+			// Random palette
+			randomColors = generateRandomColors();
+		}
+	}
+
+	let paletteColors = $derived(
+		selectedPaletteIndex === 3 ? randomColors : colorPalettes[selectedPaletteIndex].colors
+	);
 
 	// Funktion zum Anpassen der Farbe basierend auf Helligkeit
 	function adjustColor(baseColor, hueShift = 0) {
@@ -207,13 +248,24 @@
 			snapValues={[-26, 0]}
 			label="Rotation: {rotation}°"
 		/>
-		<label>Farbpalette bearbeiten</label>
-		<EditableColorPalette
-			bind:colors={paletteColors}
-			bind:selectedColorIndex
-			width={200}
-			swatchSize={35}
-		/>
+		
+		<label>Farbpalette auswählen</label>
+		<div class="palette-selector">
+			{#each colorPalettes as palette, index}
+				<button
+					class="palette-button"
+					class:selected={selectedPaletteIndex === index}
+					onclick={() => selectPalette(index)}
+				>
+					<div class="palette-preview">
+						{#each index === 3 ? randomColors : palette.colors as color}
+							<div class="color-swatch" style="background-color: {color}"></div>
+						{/each}
+					</div>
+					<span class="palette-name">{palette.name}</span>
+				</button>
+			{/each}
+		</div>
 	</div>
 
 	<div class="control-item">
@@ -229,8 +281,9 @@
 	/>
 </div>
 
-<!-- farben nicht einzeln bearbeitbar für jedes element sondern eine feste farbe 
- und jedes element hat eventuell eine andere helligkeit und saturation und so -->
+<!-- Eventuell eine seite machen bei der man feste farben hat und die dann immer den elementen zuweisen lassen
+ um zu gucken wie farben auf das muster wirken können
+ und die größe und rotation soll an alle seiten-->
 
 <style>
 	#control {
@@ -249,5 +302,61 @@
 	.control-item label {
 		font-size: 14px;
 		font-weight: 500;
+	}
+
+	.palette-selector {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+	}
+
+	.palette-button {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		padding: 12px;
+		background: rgb(40, 40, 40);
+		border: 2px solid #555;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.palette-button:hover {
+		border-color: #999;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.palette-button.selected {
+		border-color: #acacac;
+		border-width: 3px;
+		background: rgb(40, 40, 40);
+		box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+	}
+
+	.palette-preview {
+		display: flex;
+		gap: 4px;
+		width: 100%;
+	}
+
+	.color-swatch {
+		flex: 1;
+		height: 40px;
+		border-radius: 4px;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.palette-name {
+		font-size: 12px;
+		font-weight: 500;
+		color: inherit;
+	}
+
+	.palette-button.selected .palette-name {
+		color: #acacac;
+		font-weight: 600;
 	}
 </style>
