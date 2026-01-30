@@ -7,12 +7,6 @@
   - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
 -->
 
-<!-- eventuell helligkeit wechsel schiebe regler 
- 	1. farbpaletten einbauen
-	gruppierung abbilde in den farben und dann umrandet wenn ausgewählt
-	2. rotation der einzelnen quadrate ohne gruppierung
-	   
-	2. -->
 
 <script>
 	import chroma from 'chroma-js';
@@ -186,18 +180,20 @@
 <div class="sidebar-right">
 	<div class="control-item">
 		<Slider
-			bind:value={breite1}
-			min={30}
-			max={100}
-			step={0.1}
-			label="Width1: {breite1.toFixed(2)}"
-		/>
-		<Slider
 			bind:value={breite2}
 			min={30}
 			max={100}
 			step={0.1}
-			label="Width2: {breite2.toFixed(2)}"
+			label="Element size:"
+			color={color2}
+		/>
+		<Slider
+			bind:value={breite1}
+			min={30}
+			max={100}
+			step={0.1}
+			label="Element size:"
+			color={color4}
 		/>
 		<Slider
 			bind:value={rotation}
@@ -207,7 +203,7 @@
 			snapValues={[-26, 0]}
 			label="Rotation: {rotation}°"
 		/>
-		<label>Farbpalette bearbeiten</label>
+		<label>Edit Color Palette</label>
 		<EditableColorPalette
 			bind:colors={paletteColors}
 			bind:selectedColorIndex
@@ -215,18 +211,6 @@
 			swatchSize={35}
 		/>
 	</div>
-
-	<div class="control-item">
-		<label for="brightness">Helligkeit invertieren</label>
-		<Toggle bind:value={invertBrightness} label="Invert" />
-	</div>
-	<Slider
-		bind:value={gradientIntensity}
-		min={0}
-		max={360}
-		step={1}
-		label="Farbverlauf-Intensität: {gradientIntensity.toFixed(0)}"
-	/>
 </div>
 
 <!-- farben nicht einzeln bearbeitbar für jedes element sondern eine feste farbe 

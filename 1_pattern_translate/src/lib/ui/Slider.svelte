@@ -1,6 +1,6 @@
 <!-- a custom slider component -->
 <script>
-	let { min = $bindable(0), max = $bindable(100), step = $bindable(1), value = $bindable(50), label = $bindable('Slider'), snapValues = [], snapWidth = 16 } = $props();
+	let { min = $bindable(0), max = $bindable(100), step = $bindable(1), value = $bindable(50), label = $bindable('Slider'), snapValues = [], snapWidth = 16, color = '' } = $props();
 
 	let trackElement = $state(null);
 	let thumbElement = $state(null);
@@ -163,7 +163,7 @@
 			aria-valuemax={max}
 			aria-valuenow={value}
 			aria-label={label + ' slider thumb'}
-			style="left: {position}px;"
+			style="left: {position}px; {color ? `background: ${color}; border-color: ${color};` : ''}"
 		>
 			{prettifyValue(value)}
 		</div>

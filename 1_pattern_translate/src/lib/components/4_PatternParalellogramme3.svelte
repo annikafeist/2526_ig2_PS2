@@ -27,6 +27,12 @@
 	let selectedColor3 = $state(2);
 	let selectedColor4 = $state(3);
 
+	// Track which dropdown is open
+	let dropdown1Open = $state(false);
+	let dropdown2Open = $state(false);
+	let dropdown3Open = $state(false);
+	let dropdown4Open = $state(false);
+
 	// Track previous values to know which one changed
 	let prevColor1 = $state(0);
 	let prevColor2 = $state(1);
@@ -177,53 +183,121 @@
 </div>
 
 <div class="sidebar-right">
-	<div class="control-item">
-		<label for="color1-select">Element 1 color:</label>
-		<select id="color1-select" bind:value={selectedColor1}>
-			{#each availableColors as color, index}
-				<option value={index}>
-					color {index + 1}
-				</option>
-			{/each}
-		</select>
-	</div>
-
-	<div class="control-item">
-		<label for="color2-select">Element 2 color:</label>
-		<select id="color2-select" bind:value={selectedColor2}>
-			{#each availableColors as color, index}
-				<option value={index}>
-					color {index + 1}
-				</option>
-			{/each}
-		</select>
-	</div>
-
-	<div class="control-item">
-		<label for="color3-select">Element 3 color:</label>
-		<select id="color3-select" bind:value={selectedColor3}>
-			{#each availableColors as color, index}
-				<option value={index}>
-					color {index + 1}
-				</option>
-			{/each}
-		</select>
-	</div>
-
-	<div class="control-item">
-		<label for="color4-select">Element 4 color:</label>
-		<select id="color4-select" bind:value={selectedColor4}>
-			{#each availableColors as color, index}
-				<option value={index}>
-					color {index + 1}
-				</option>
-			{/each}
-		</select>
-	</div>
-
-	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Width1: {breite1.toFixed(2)}" />
-	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Width2: {breite2.toFixed(2)}" />
+	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Element size:" color={color1} />
+	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Element size:" color={color4} />
 	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation: {rotation}°" />
+
+	<div class="control-item">
+		<label>Element 1 color:</label>
+		<div class="custom-select">
+			{#if !dropdown1Open}
+				<button
+					class="dropdown-trigger"
+					style="background-color: {availableColors[selectedColor1]}; color: white;"
+					onclick={() => dropdown1Open = true}
+				>
+					Color {selectedColor1 + 1}
+				</button>
+			{:else}
+				<div class="color-options">
+					{#each availableColors as color, index}
+						<button
+							class="color-option"
+							class:selected={selectedColor1 === index}
+							style="background-color: {color};"
+							onclick={() => { selectedColor1 = index; dropdown1Open = false; }}
+						>
+							Color {index + 1}
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="control-item">
+		<label>Element 2 color:</label>
+		<div class="custom-select">
+			{#if !dropdown2Open}
+				<button
+					class="dropdown-trigger"
+					style="background-color: {availableColors[selectedColor2]}; color: white;"
+					onclick={() => dropdown2Open = true}
+				>
+					Color {selectedColor2 + 1}
+				</button>
+			{:else}
+				<div class="color-options">
+					{#each availableColors as color, index}
+						<button
+							class="color-option"
+							class:selected={selectedColor2 === index}
+							style="background-color: {color};"
+							onclick={() => { selectedColor2 = index; dropdown2Open = false; }}
+						>
+							Color {index + 1}
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="control-item">
+		<label>Element 3 color:</label>
+		<div class="custom-select">
+			{#if !dropdown3Open}
+				<button
+					class="dropdown-trigger"
+					style="background-color: {availableColors[selectedColor3]}; color: white;"
+					onclick={() => dropdown3Open = true}
+				>
+					Color {selectedColor3 + 1}
+				</button>
+			{:else}
+				<div class="color-options">
+					{#each availableColors as color, index}
+						<button
+							class="color-option"
+							class:selected={selectedColor3 === index}
+							style="background-color: {color};"
+							onclick={() => { selectedColor3 = index; dropdown3Open = false; }}
+						>
+							Color {index + 1}
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="control-item">
+		<label>Element 4 color:</label>
+		<div class="custom-select">
+			{#if !dropdown4Open}
+				<button
+					class="dropdown-trigger"
+					style="background-color: {availableColors[selectedColor4]}; color: white;"
+					onclick={() => dropdown4Open = true}
+				>
+					Color {selectedColor4 + 1}
+				</button>
+			{:else}
+				<div class="color-options">
+					{#each availableColors as color, index}
+						<button
+							class="color-option"
+							class:selected={selectedColor4 === index}
+							style="background-color: {color};"
+							onclick={() => { selectedColor4 = index; dropdown4Open = false; }}
+						>
+							Color {index + 1}
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
 </div>
 
 <style>
@@ -253,26 +327,78 @@
 		color: #ccc;
 	}
 
-	.control-item select {
+	.custom-select {
 		width: 100%;
-		height: 20px;
+		/* border: 1px solid #777; */
+		overflow: hidden;
+		position: relative;
+	}
+
+	.dropdown-trigger {
+		width: 100%;
+		height: 28px;
+		padding: 0 8px;
+		padding-right: 24px;
+		margin: 0;
+		font-size: 0.75rem;
+		border: none;
+		border-radius: 0;
+		color: white;
+		cursor: pointer;
+		text-align: left;
+		font-variant-numeric: tabular-nums;
+		transition: opacity 0.2s;
+		display: block;
+		position: relative;
+	}
+
+	.dropdown-trigger::after {
+		content: '';
+		position: absolute;
+		right: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 0;
+		height: 0;
+		border-left: 4px solid transparent;
+		border-right: 4px solid transparent;
+		border-top: 5px solid white;
+	}
+
+	.dropdown-trigger:hover {
+		opacity: 0.9;
+	}
+
+	.color-options {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.color-option {
+		width: 100%;
+		height: 28px;
 		padding: 0 8px;
 		font-size: 0.75rem;
-		border-radius: 4px;
-		border: 1px solid #777;
-		background-color: #666;
-		color: #fff;
+		border: none;
+		border-radius: 0;
+		margin: 0;
+		color: white;
 		cursor: pointer;
+		text-align: left;
 		font-variant-numeric: tabular-nums;
+		transition: opacity 0.2s;
+		display: block;
 	}
 
-	.control-item select:hover {
-		background-color: #777;
+	.color-option:hover {
+		opacity: 0.8;
 	}
 
-	.control-item select:focus {
-		outline: none;
-		border-color: #999;
+	.color-option.selected {
+		border-left: 3px solid white;
+		border-right: 3px solid white;
+		padding-left: 5px;
 	}
 </style>
 

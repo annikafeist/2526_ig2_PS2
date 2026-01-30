@@ -17,34 +17,34 @@
 
 	let patterns = [
   {
-    name: 'Squares in the Grid (size)',
+    name: 'Adjustable Parallelograms',
     component: PatternParalellogramme2c,
     description:
-      'A grid of squares divided into two triangles that can get an offset.'
+      'A  grid of parallelograms whose width can be adjusted and that can be rotated.'
   },
   {
-    name: 'Squares in the Grid (colors1)',
+    name: 'Free Color Assignment',
     component: PatternParalellogramme3,
     description:
-      'A grid of squares divided into two triangles that can get an offset and size.'
+      'A grid of parallelograms with preset colors that can be freely assigned to each element.'
   },
   {
-    name: 'Squares in the Grid (colorsB)',
+    name: 'Full Color Customization',
     component: PatternParalellogramme2bcolors,
     description:
-      'A grid of squares divided into two triangles that can get an offset and size.'
+      'A grid of parallelograms whose colors can be individually customized.'
   },
   {
-    name: 'Squares in the Grid (colorsA)',
+    name: 'Inversion & Gradient Options',
     component: PatternParalellogramme2acolors,
     description:
-      'A grid of squares divided into two triangles that can get an offset and size.'
+      'A grid of parallelograms with a limited color palette that can be inverted and enhanced with a gradient.'
   },
   {
-    name: 'Squares in the Grid (colorsC)',
+    name: 'Palette Selection',
     component: PatternParalellogramme2ccolors,
     description:
-      'A grid of squares divided into two triangles that can get an offset and size.'
+      'A grid of parallelograms with colors selectable from a predefined palette.'
   },
 ];
 
