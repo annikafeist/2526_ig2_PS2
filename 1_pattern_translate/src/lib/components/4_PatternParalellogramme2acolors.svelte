@@ -1,13 +1,3 @@
-<!-- 
-  - HTML und Svelte Code zeigen + Funktionsaufrufe
-  - Zeige wie das erste kleine Pattern beginnt (außerhalb der Schleife)
-
-  - 2 Rechtecke in der Schleife und entsprechend der Indizes x, y, width und height anpassen
-  - Funktionen müssen sie schreiben 
-  - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
--->
-
-
 <script>
 	import chroma from 'chroma-js';
 	import Toggle from '$lib/ui/Toggle.svelte';
@@ -20,12 +10,12 @@
 	let hue1 = $state(0); // Farbton für Element 1 und 3 (0-360)
 	let hue2 = $derived((hue1 + 40) % 360); // Farbton für Element 2 und 4, immer 40° mehr als hue1
 
-	// Feste Saturation und Lightness für jedes der 4 Elemente
+	// Feste Saturation und Lightness 
 	// Format: [Saturation (0-100), Lightness (0-100)]
-	const element1_SL = [100, 35]; // Mittel-dunkel, gesättigt
-	const element2_SL = [70, 80]; // Heller, weniger gesättigt
-	const element3_SL = [100, 15]; // Dunkel, sehr gesättigt
-	const element4_SL = [80, 60]; // Sehr hell, wenig gesättigt
+	const element1_SL = [100, 35]; 
+	const element2_SL = [70, 80]; 
+	const element3_SL = [100, 15]; 
+	const element4_SL = [80, 60]; 
 
 	// Funktion zum Erstellen einer HSL-Farbe aus Hue und fester Saturation/Lightness
 	function createColorFromHue(hue, saturation, lightness, hueShift = 0) {
@@ -180,15 +170,15 @@
 			max={37}
 			step={1}
 			snapValues={[-26, 0]}
-			label="Rotation: {rotation}°"
+			label="Rotation:"
 		/>
-		<Slider bind:value={hue1} min={0} max={360} step={1} label="Hue: {Math.round(hue1)}°" />
+		<Slider bind:value={hue1} min={0} max={360} step={1} label="Hue:" />
 		<Slider
 			bind:value={gradientIntensity}
 			min={0}
 			max={360}
 			step={1}
-			label="Gradient intensity: {gradientIntensity.toFixed(0)}"
+			label="Gradient intensity:"
 		/>
 	</div>
 
@@ -197,11 +187,6 @@
 		<Toggle bind:value={invertBrightness} label="Invert" />
 	</div>
 </div>
-
-<!-- Farbpaletten mit festen Farben, dafür kann man dann zb Saturation oder luminess bearbeiten -->
-
-<!-- farben nicht einzeln bearbeitbar für jedes element sondern eine feste farbe 
- und jedes element hat eventuell eine andere helligkeit und saturation und so -->
 
 <style>
 	#control {

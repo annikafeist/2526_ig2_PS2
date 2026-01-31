@@ -1,12 +1,3 @@
-<!-- 
-  - HTML und Svelte Code zeigen + Funktionsaufrufe
-  - Zeige wie das erste kleine Pattern beginnt (außerhalb der Schleife)
-
-  - 2 Rechtecke in der Schleife und entsprechend der Indizes x, y, width und height anpassen
-  - Funktionen müssen sie schreiben 
-  - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
--->
-
 <script>
 	const squareCount = 20;
 	const squareSize = 1000 / squareCount;

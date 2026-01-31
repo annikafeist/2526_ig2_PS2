@@ -1,9 +1,4 @@
-<!-- 
-  - Komplett mit Komponenten und Code zeigen 
--->
-
 <script>
-	// import { transformWithEsbuild } from 'vite';
 
 	const squareCount = 20;
     const squareSize = 80;

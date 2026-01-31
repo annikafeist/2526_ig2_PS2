@@ -1,13 +1,3 @@
-<!-- 
-  - HTML und Svelte Code zeigen + Funktionsaufrufe
-  - Zeige wie das erste kleine Pattern beginnt (außerhalb der Schleife)
-
-  - 2 Rechtecke in der Schleife und entsprechend der Indizes x, y, width und height anpassen
-  - Funktionen müssen sie schreiben 
-  - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
--->
-
-
 <script>
 	import chroma from 'chroma-js';
 	import Toggle from '$lib/ui/Toggle.svelte';
@@ -172,7 +162,7 @@
 								(breite1 + breite2)} {rightCorners[3].y - breite2}"
 							fill={getColor(color1, i, j)}
 						/>
-						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
+						<!-- Polygon (color2) - untere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {nextCorners[1]
@@ -180,7 +170,7 @@
 								breite2} {nextCorners[0].y + (breite1 + breite2)},"
 							fill={getColor(color2, i, j)}
 						/>
-						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
+						<!-- Polygon (color3) - obere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {nextCorners[3]
@@ -190,31 +180,9 @@
 							fill={getColor(color3, i, j)}
 						/>
 					</g>
-
-					<!-- <polygon transform="translate({(50+50)*i+50+50} {(50+50)*i+50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
-
-					<!-- <polygon transform="translate({-400+i*150} {0-i*50}) rotate({0}) " points="0 0 100 0 150 50 50 50" fill="hotpink" />
-                    <polygon transform="translate({-200+i*150} {0-i*50}) rotate({90}) " points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-                    <rect transform="translate({-350+i*150} {50-i*50})" width={50} height={50} fill="#ff0" />
-                    <polygon transform="translate({-400+i*150} {0-i*50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
 				{/each}
 			</g>
 		{/each}
-
-		<!-- <rect transform="translate({200} {200})" width={50} height={50} fill="#ff0" />
-		<polygon transform="translate({200} {200+50+50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" />
-
-		<rect transform="translate({200+50+50} {200-50})" width={50} height={50} fill="#ff0" />
-		<polygon transform="translate({200+50+50} {200+50+50-50})" points="0 {-50} {50} 0 0 {50} {-50} 0" fill="#0ff" /> -->
-
-		<!-- <polygon transform="translate(0 200)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(200 200) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(150 150)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(350 150) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(300 100)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(500 100) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" /> -->
 	</svg>
 </div>
 
@@ -242,10 +210,10 @@
 			max={37}
 			step={1}
 			snapValues={[-26, 0]}
-			label="Rotation: {rotation}°"
+			label="Rotation:"
 		/>
 		
-		<label>choose color palette</label>
+		<label>Choose color palette</label>
 		<div class="palette-selector">
 			{#each colorPalettes as palette, index}
 				<button
@@ -264,11 +232,6 @@
 		</div>
 	</div>
 </div>
-
-<!-- Eventuell eine seite machen bei der man feste farben hat und die dann immer den elementen zuweisen lassen
- um zu gucken wie farben auf das muster wirken können
- und die größe und rotation soll an alle seiten-->
-
 <style>
 	#control {
 		display: flex;

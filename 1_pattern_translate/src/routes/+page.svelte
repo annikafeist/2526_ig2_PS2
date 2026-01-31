@@ -17,31 +17,31 @@
 
 	let patterns = [
   {
-    name: 'Adjustable Parallelograms',
+    name: 'Adjustable Parallelograms ',
     component: PatternParalellogramme2c,
     description:
       'A  grid of parallelograms whose width can be adjusted and that can be rotated.'
   },
   {
-    name: 'Free Color Assignment',
+    name: 'Free Color Assignment 3',
     component: PatternParalellogramme3,
     description:
       'A grid of parallelograms with preset colors that can be freely assigned to each element.'
   },
   {
-    name: 'Full Color Customization',
+    name: 'Full Color Customization b',
     component: PatternParalellogramme2bcolors,
     description:
       'A grid of parallelograms whose colors can be individually customized.'
   },
   {
-    name: 'Inversion & Gradient Options',
+    name: 'Inversion & Gradient Options a',
     component: PatternParalellogramme2acolors,
     description:
       'A grid of parallelograms with a limited color palette that can be inverted and enhanced with a gradient.'
   },
   {
-    name: 'Palette Selection',
+    name: 'Palette Selection c',
     component: PatternParalellogramme2ccolors,
     description:
       'A grid of parallelograms with colors selectable from a predefined palette.'

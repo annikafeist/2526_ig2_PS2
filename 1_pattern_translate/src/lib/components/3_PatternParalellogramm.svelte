@@ -1,12 +1,3 @@
-<!-- 
-  - HTML und Svelte Code zeigen + Funktionsaufrufe
-  - Zeige wie das erste kleine Pattern beginnt (außerhalb der Schleife)
-
-  - 2 Rechtecke in der Schleife und entsprechend der Indizes x, y, width und height anpassen
-  - Funktionen müssen sie schreiben 
-  - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
--->
-
 <script>
 	const squareCount = 20;
 	const squareSize = 1000 / squareCount;
@@ -16,14 +7,6 @@
 	let scaleFactor = 1;
 	let heightFactor = 1;
 	let rotationAngle = 0;
-
-	// function calculateSizeCords1(xi, yi) {
-
-	// }
-
-	// function calculateSizeCords2(xi, yi) {
-
-	// }
 </script>
 
 <div id="control">
@@ -70,14 +53,6 @@
 			{/each}
 		{/each}
 
-		<!-- <polygon transform="translate(0 200)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(200 200) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(150 150)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(350 150) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" />
-
-        <polygon transform="translate(300 100)" points="0 0 100 0 150 50 50 50" fill="hotpink" />
-        <polygon transform="translate(500 100) rotate(90)" points="0 0 100 0 150 50 50 50" fill="dodgerblue" /> -->
 	</svg>
 </div>
 

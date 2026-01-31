@@ -1,19 +1,3 @@
-<!-- 
-  - HTML und Svelte Code zeigen + Funktionsaufrufe
-  - Zeige wie das erste kleine Pattern beginnt (außerhalb der Schleife)
-
-  - 2 Rechtecke in der Schleife und entsprechend der Indizes x, y, width und height anpassen
-  - Funktionen müssen sie schreiben 
-  - Kleiner Tipp mit data-x um zu sehen welche Indizes die Rects haben
--->
-
-<!-- eventuell helligkeit wechsel schiebe regler 
- 	1. farbpaletten einbauen
-	gruppierung abbilde in den farben und dann umrandet wenn ausgewählt
-	2. rotation der einzelnen quadrate ohne gruppierung
-	   
-	2. -->
-
 <script>
 	import chroma from 'chroma-js';
 	import Slider from '$lib/ui/Slider.svelte';
@@ -126,14 +110,6 @@
 			y: centerY + (corner.x - centerX) * sin + (corner.y - centerY) * cos
 		}));
 	}
-
-	// function calculateSizeCords1(xi, yi) {
-
-	// }
-
-	// function calculateSizeCords2(xi, yi) {
-
-	// }
 </script>
 
 
@@ -161,13 +137,13 @@
 						points="{corners[2].x} {corners[2].y}, {bottomCorners[1].x + breite2} {bottomCorners[1].y + (breite1 + breite2)}, {bottomRightCorners[0].x + (breite1 + breite2) + breite2} {bottomRightCorners[0].y + (breite1 + breite2) - breite2}, {rightCorners[3].x + (breite1 + breite2)} {rightCorners[3].y - breite2}"
 						fill={color1}
 						/>
-						<!-- Angepasstes Polygon (color2) - untere rechte Seite -->
+						<!-- Polygon (color2) - untere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[3].x} {corners[3].y}, {corners[2].x} {corners[2].y}, {nextCorners[1].x + breite2} {nextCorners[1].y + (breite1 + breite2)}, {nextCorners[0].x + breite2} {nextCorners[0].y + (breite1 + breite2)},"
 							fill={color2}
 						/>
-						<!-- Angepasstes Polygon (color3) - obere rechte Seite -->
+						<!-- Polygon (color3) - obere rechte Seite -->
 						<polygon
 							transform="translate(0)"
 							points="{corners[1].x} {corners[1].y}, {corners[2].x} {corners[2].y}, {nextCorners[3].x + (breite1 + breite2)} {nextCorners[3].y - breite2}, {nextCorners[0].x + (breite1 + breite2)} {nextCorners[0].y - breite2}"
@@ -185,7 +161,7 @@
 <div class="sidebar-right">
 	<Slider bind:value={breite2} min={30} max={100} step={0.1} label="Element size:" color={color1} />
 	<Slider bind:value={breite1} min={30} max={100} step={0.1} label="Element size:" color={color4} />
-	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation: {rotation}°" />
+	<Slider bind:value={rotation} min={-90} max={37} step={1} snapValues={[-26, 0]} label="Rotation:" />
 
 	<div class="control-item">
 		<label>Element 1 color:</label>
@@ -329,7 +305,6 @@
 
 	.custom-select {
 		width: 100%;
-		/* border: 1px solid #777; */
 		overflow: hidden;
 		position: relative;
 	}
